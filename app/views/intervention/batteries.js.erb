@@ -1,0 +1,1 @@
+$('select#batteries_id').html("<%= j content_tag(:option,'-- NONE --',:value=>"")+options_from_collection_for_select(@listed_batteries, :id, :id) %>");

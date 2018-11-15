@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<head>	
+
+	<!-- JAVASCRIPT -->
+	<script>
+		function handleSelect() {
+			var showInfo = document.getElementById("intInfos");
+			if (showInfo.style.display === "none") {
+				showInfo.style.display = "block";
+			}
+		}
+
+		//get listed buildings
+		$(function listBuildings() {
+   		$("select#customers_id").on("change", function listBuildings() {
+        $.ajax({
+			url: "/list_buildings_by_customers",
+            type: "GET",
+            data: { selected_customer: $("select#customers_id").val() }
+        		});
+   			});
+		});
+
+		//get listed batteries
+		$(function listBatteries() {
+   		$("select#buildings_id").on("change", function listBatteries() {
+        $.ajax({
+			url: "/list_batteries_by_buildings",
+            type: "GET",
+            data: { selected_building: $("select#buildings_id").val() }
+        		});
+   			});
+		});
+
+		//get listed columns
+		$(function listColumns() {
+   		$("select#batteries_id").on("change", function listColumns() {
+        $.ajax({
+			url: "/list_columns_by_batteries",
+            type: "GET",
+            data: { selected_battery: $("select#batteries_id").val() }
+        		});
+   			});
+		});
+
+		//get listed elevators
+		$(function listElevators() {
+   		$("select#columns_id").on("change", function listElevators() {
+        $.ajax({
+			url: "/list_elevators_by_columns",
+            type: "GET",
+            data: { selected_column: $("select#columns_id").val() }
+        		});
+   			});
+		});
+
+		//post form to database
+		$("#intervention_form").submit(function(event){
+			event.preventDefault(); //prevent default action 
+			var post_url = $(this).attr("action"); //get form action url
+			var request_method = $(this).attr("method"); //get form GET/POST method							
+			var form_data = new FormData($(this)[0]); //Encode form elements for submission			
+			$.ajax({
+				url : post_url,
+				type: request_method,
+				async: false,
+				cache: false,
+				contentType: false,
+				processData: false,
+				data : form_data
+			}).done(function(response){
+				alert('INTERVENTION SENT');
+				window.location="/intervention";
+			});
+		});
+	</script><br><br>
+	<!-- JAVASCRIPT -->
+
+</head>
+
+<body>
+	
+	<form id="intervention_form" method="post" action="/new_intervention" enctype="multipart/form-data">
+		<div class="container">
+			<div class="row">
+				<!-- EMPLOYEE -->
+				<div class="col-md-4 text-center text-danger offset-md-2">
+					<label for="intervention[employee_id]"><b>EMPLOYEE</b></label>
+					<%= collection_select(:employees, :id, Employee.all, :id, :name,
+					options={
+						:include_blank => "-- NONE --",
+						:selected      => "-- NONE --"}, 
+					html_options={
+						:style		   => "width:300px",
+						:name          => 'intervention[employee_id]'})%>
+				</div>
+					
+				<!-- CUSTOMER -->
+				<div class="col-md-4 text-center text-danger">
+					<label for="intervention[customer_id]"><b>CUSTOMER</b></label>
+					<%= collection_select(:customers, :id, Customer.all, :id, :name,
+					options={
+						:include_blank => "-- NONE --",
+						:selected      => "-- NONE --"}, 
+					html_options={
+						:onchange      => "handleSelect()",
+						:style 		   => "width:300px",
+						:name          => "intervention[customer_id]"})%>
+				</div>
+			</div>
+		</div><br>
+
+		<div class="container" id="intInfos" style="display:none">
+			<div class="row">
+				<!-- BUILDING -->
+				<div class="col-sm-4 text-center text-danger offset-sm-1">
+					<label for="intervention[building_id]"><b>BUILDING</b></label>
+					<%= collection_select(:buildings, :id, Building.all.where(customer_id: :customer_id), :id, :name,
+					options={
+						:include_blank => "-- NONE --",
+						:selected      => "-- NONE --"},
+					html_options={
+						:style 		   => "width:400px",
+						:name          => "intervention[building_id]"})%>
+				</div>
+
+				<!-- BATTERY -->
+				<div class="col-auto text-center text-danger">
+					<label for="intervention[battery_id]"><b>BATTERY</b></label>
+					<%= collection_select(:batteries, :id, Battery.all.where(building_id: :building_id), :id, :id,
+					options={
+						:include_blank => "-- NONE --",
+						:selected      => "-- NONE --"},
+					html_options={
+						:style 		   => "width:200px",
+						:name          => "intervention[battery_id]"})%>
+				</div>
+
+				<!-- COLUMN -->
+				<div class="col-auto text-center text-danger">
+					<label for="intervention[column_id]"><b>COLUMN</b></label>
+					<%= collection_select(:columns, :id, Column.all.where(battery_id: :battery_id), :id, :id,
+					options={
+						:include_blank => "-- NONE --",
+						:selected      => "-- NONE --"},
+					html_options={
+						:style 		   => "width:200px",
+						:name          => "intervention[column_id]"})%>
+				</div>
+
+				<!-- ELEVATOR -->
+				<div class="col-auto text-center text-danger">
+					<label for="intervention[elevator_id]"><b>ELEVATOR</b></label>
+					<%= collection_select(:elevators, :id, Elevator.all.where(column_id: :column_id), :id, :id,
+					options={
+						:include_blank => "-- NONE --",
+						:selected      => "-- NONE --"},
+					html_options={
+						:style 		   => "width:200px",
+						:name          => "intervention[elevator_id]"})%>
+				</div>
+			</div>
+		</div><br>
+
+		<div class="container">
+			<!-- DESCRIPTION -->
+			<div class="col-md-8 offset-md-2 text-center text-danger">
+				<label for="intervention[intervention_report]"><b>DESCRIPTION</b></label>
+				<textarea required maxlength="5000" rows="5" class="form-control" name="intervention[intervention_report]"></textarea>
+			</div>
+		</div><br>
+
+		<div class="container">
+			<!-- SUBMIT -->
+			<div class="row">
+				<button  type="submit" class="btn btn-outline-danger col-md-2 offset-md-8">
+				<i class="fa fa-check"></i> <b>SUBMIT</b></button>
+			</div>
+		</div><br><br>
+	</form>
+
+</body>
+</html>
