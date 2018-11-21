@@ -39,6 +39,17 @@ class InterventionController < ApplicationController
         @intervention_post.author = current_user.employee
         @intervention_post.save! 
         redirect_to :intervention
-    end
+        
+        ticket = ZendeskAPI::Ticket.create!($client, :type => "support", :priority => "urgent",
+            :subject => "AuthorID: #{@intervention_post.author.id}  CustomerID: #{@intervention_post.customer.id}",
+            :comment => { :value => "**#{@intervention_post.author.name}** has filled an intervention for **#{@intervention_post.customer.name}**.
+            \n \n **BuildingID:** #{@intervention_post.building.id} (#{@intervention_post.building.name})
+            \n \n **BatteryID:** #{@intervention_post.battery.id}
+            \n \n **ColumnID:** #{@intervention_post.column ? @intervention_post.column.id : "NONE"}
+            \n \n **ElevatorID:** #{@intervention_post.elevator ? @intervention_post.elevator.id : "NONE"}
+            \n \n **Assigned employee:** #{@intervention_post.employee.id} (#{@intervention_post.employee.name})
+            \n \n **Task description:** #{@intervention_post.intervention_report}" }
+        )
 
+    end
 end

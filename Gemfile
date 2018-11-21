@@ -30,6 +30,7 @@ gem 'slack-notifier'
 gem 'figaro'
 gem 'twilio-ruby'
 gem 'jquery-rails'
+gem 'zendesk_api'
 
 # Use devise for Authentication
 gem 'devise', '~> 4.2'
