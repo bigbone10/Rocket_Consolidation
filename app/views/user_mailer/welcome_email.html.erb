@@ -4,6 +4,17 @@
     attachments.inline['R2.png'] = File.read("#{Rails.root}/app/assets/images/R2.png")
     <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
   </head>
+  
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-130811359-1"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'UA-130811359-1');
+  </script>
+
   <body>
     <h1>Welcome to rocketelevators.ca, <%= @user.name %></h1>
     <p>
