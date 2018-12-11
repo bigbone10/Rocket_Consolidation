@@ -31,6 +31,7 @@ gem 'figaro'
 gem 'twilio-ruby'
 gem 'jquery-rails'
 gem 'zendesk_api'
+gem 'newrelic_rpm'
 
 # Use devise for Authentication
 gem 'devise', '~> 4.2'
