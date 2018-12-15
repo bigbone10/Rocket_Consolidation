@@ -32,6 +32,8 @@ gem 'twilio-ruby'
 gem 'jquery-rails'
 gem 'zendesk_api'
 gem 'newrelic_rpm'
+gem 'syslogger', '~> 1.6.0'
+gem 'lograge','~> 0.3.1'
 
 # Use devise for Authentication
 gem 'devise', '~> 4.2'
